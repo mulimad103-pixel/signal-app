@@ -1,4 +1,4 @@
-name: Test
+name: Build Android APK
 
 on:
   push:
@@ -6,8 +6,17 @@ on:
       - main
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Say Hello
-        run: echo "Hello World"
+        run: echo "Build starting"
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Check Python
+        run: python --version
