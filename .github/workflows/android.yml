@@ -27,7 +27,14 @@ jobs:
           cmake libffi-dev libssl-dev \
           wget tar
 
-      # ✅ Install Android SDK manually
+      # ✅ FORCE JAVA 17
+      - name: Set Java 17
+        run: |
+          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+          sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+          java -version
+
+      # ✅ INSTALL ANDROID SDK MANUALLY
       - name: Install Android SDK
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
