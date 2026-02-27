@@ -21,20 +21,23 @@ jobs:
           sudo apt update
           sudo apt install -y \
           python3-pip python3-setuptools \
-          git zip unzip openjdk-17-jdk \
+          git zip unzip \
+          openjdk-17-jdk \
           autoconf libtool pkg-config zlib1g-dev \
           libncurses5-dev libncursesw5-dev \
           cmake libffi-dev libssl-dev \
           wget tar
 
-      # ✅ FORCE JAVA 17
-      - name: Set Java 17
+      # ✅ FORCE JAVA 17 COMPLETELY
+      - name: Configure Java 17
         run: |
-          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-          sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+          echo "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH" >> $GITHUB_ENV
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
           java -version
 
-      # ✅ INSTALL ANDROID SDK MANUALLY
+      # ✅ INSTALL ANDROID SDK
       - name: Install Android SDK
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
@@ -46,23 +49,14 @@ jobs:
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
 
+      # ✅ INSTALL SDK PACKAGES (NOW USING JAVA 17)
       - name: Accept licenses & install packages
         run: |
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
           yes | sdkmanager --licenses
           sdkmanager "platform-tools"
           sdkmanager "platforms;android-33"
           sdkmanager "build-tools;33.0.2"
 
-      - name: Install Buildozer
-        run: |
-          pip install --upgrade pip
-          pip install buildozer cython
-
-      - name: Build APK
-        run: buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: signal-app-apk
-          path: bin/*.apk
+      - name
