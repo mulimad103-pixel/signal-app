@@ -21,6 +21,9 @@ jobs:
           zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 \
           cmake libffi-dev libssl-dev cython3
 
+          # 🔥 Fix: Make cython command available
+          sudo ln -s /usr/bin/cython3 /usr/bin/cython || true
+
       - name: Install Buildozer
         run: |
           python3 -m pip install --upgrade pip
