@@ -16,10 +16,6 @@ jobs:
         with:
           python-version: "3.10"
 
-      # ✅ Install Android SDK properly
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install system dependencies
         run: |
           sudo apt update
@@ -28,13 +24,25 @@ jobs:
           git zip unzip openjdk-17-jdk \
           autoconf libtool pkg-config zlib1g-dev \
           libncurses5-dev libncursesw5-dev \
-          cmake libffi-dev libssl-dev
+          cmake libffi-dev libssl-dev \
+          wget tar
 
-      - name: Accept Android licenses
-        run: yes | sdkmanager --licenses
-
-      - name: Install required Android packages
+      # ✅ Install Android SDK manually
+      - name: Install Android SDK
         run: |
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip commandlinetools-linux-11076708_latest.zip
+          mv cmdline-tools latest
+
+          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
+
+      - name: Accept licenses & install packages
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools"
           sdkmanager "platforms;android-33"
           sdkmanager "build-tools;33.0.2"
 
@@ -46,7 +54,7 @@ jobs:
       - name: Build APK
         run: buildozer android debug
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: signal-app-apk
