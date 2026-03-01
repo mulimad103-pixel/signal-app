@@ -9,13 +9,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    container:
-      image: kivy/buildozer:latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        run: buildozer android debug
-        env:
-          BUILDOZER_ALLOW_ROOT: 1
+      - name: Build APK using Docker
+        run: |
+          docker run --rm \
+          -v ${{ github.workspace }}:/home/user/app \
+          -w /home/user/app \
+          kivy/buildozer \
+          sh -c "yes | buildozer android debug"
