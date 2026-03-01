@@ -17,3 +17,5 @@ jobs:
 
       - name: Build with Buildozer
         run: buildozer android debug
+        env:
+          BUILDOZER_ALLOW_ROOT: 1
