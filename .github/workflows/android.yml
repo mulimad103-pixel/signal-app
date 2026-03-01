@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+      - name: Build APK
+        uses: kivy/buildozer-action@v1
         with:
-          command: buildozer android debug
+          buildozer_command: buildozer android debug
